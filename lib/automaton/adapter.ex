@@ -12,7 +12,7 @@ defmodule Automaton.Adapter do
   @callback parse(response) :: message
 
   @doc """
-  Sends a message to the messaging platform
+  Sends a message to the messaging platform with the given config
   """
   @callback send(message, config) :: {:ok, message} | {:error, term}
 end
