@@ -22,19 +22,19 @@ defmodule Automaton.Bot do
   Most of the configuration that goes into the config is specific to
   the adapter, so check the adapter's documentation for more information.
 
-  Note that the configuration is set into your messenger at compile time.
+  Note that the configuration is set into your bot at compile time.
   If you need to reference config at runtime you can use a tuple like
   `{:system, "ENV_VAR"}`.
 
     config :sample, Sample.Bot,
       adapter: Automaton.Adapters.FacebookMessenger,
-      version: {:system, "FB_MESSENGER_API_VER"}
+      access_token: {:system, "FB_MESSENGER_TOKEN"}
 
   Once configured, you can use the adapter in your router/endpoints:
 
     forward "/webhook/messenger", Sample.Bot
 
-  This will forward responses to the messenger which will then parse it
+  This will forward responses to the bot which will then parse it
   using the adapter configured and start a conversation.
   """
   defmacro __using__(opts) do
@@ -62,14 +62,15 @@ defmodule Automaton.Bot do
 
       def parse(response) do
         message = @adapter.parse(response)
-        %{message | messenger: __MODULE__}
+        %{message | bot: __MODULE__}
       end
 
+      def send(message, config \\ [])
       def send(%Automaton.Conversation.Message{} = message, config) do
         config =
           @config
           |> Keyword.merge(config)
-          |> Automaton.Messenger.parse_runtime_config()
+          |> Automaton.Bot.parse_runtime_config()
 
         @adapter.send(message, config)
       end
@@ -83,14 +84,14 @@ defmodule Automaton.Bot do
   @doc """
   Parses the OTP configuration at compile time.
   """
-  def parse_config(messenger, opts) do
+  def parse_config(bot, opts) do
     otp_app = Keyword.fetch!(opts, :otp_app)
-    config = Application.get_env(otp_app, messenger, [])
+    config = Application.get_env(otp_app, bot, [])
     adapter = opts[:adapter] || config[:adapter]
 
     unless adapter do
       raise ArgumentError, "missing :adapter configuration in " <>
-                           "config #{inspect otp_app}, #{inspect messenger}"
+                           "config #{inspect otp_app}, #{inspect bot}"
     end
 
     {otp_app, adapter, config}

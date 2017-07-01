@@ -11,9 +11,17 @@ Elixir library to easily build and run ChatBots.
 config :sample, Sample.Bot,
   adapter: Automaton.Adapters.Test
 
+config :sample, Sample.Bot.Brain,
+  brain: Automaton.Brains.Echo
+
 # In your application code
 defmodule Sample.Bot do
-  use Automaton.Bot, otp_app: :sample
+  use Automaton.Bot, otp_app: :sample,
+                      brain: Sample.Bot.Brain
+end
+
+defmodule Sample.Bot.Brain do
+  use Automaton.Bot.Brain, otp_app: :sample
 end
 
 # In an IEx session
@@ -47,17 +55,26 @@ config :sample, Sample.Bot,
   # adapter config (api keys, etc.)
 ```
 
-You can also define custom adapters by implementation callbacks defined in
+You can also define custom adapters by implementing callbacks defined in
 [adapter.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/adapter.ex)
 
 ## Brains
 
-Platform        | Automaton adapter
-:---------------| :------------------------
-Echo            | Automaton.Brains.Echo
-Wit.ai          | Automaton.Brains.WitAi
-Api.ai          | Automaton.Brains.ApiAi
+Platform                | Automaton adapter
+:-----------------------| :------------------------
+Echo                    | Automaton.Brains.Echo
+[Wit.ai](http://wit.ai) | Automaton.Brains.WitAi
 
+Configure your adapter in `config/config.exs` file:
+
+```elixir
+config :sample, Sample.Bot.Brain,
+  brain: Automaton.Brains.WitAi
+  # brain config (api keys, etc.)
+```
+
+You can also define custom brains by implementing callbacks defined in
+[brain.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/bot/brain.ex)
 
 ## Phoenix Integration
 
