@@ -2,9 +2,6 @@ defmodule Automaton.Bot.Brain do
   @moduledoc """
   Defines a bot's brain and it's specifications
 
-  Acts as a wrapper around an messaging adapter to make it easy to swap
-  adapters without having to change your code.
-
   When used, the brain expects `:otp_app` as an option.
   The `:otp_app` should point to an OTP application that has the brain
   configuration. For example, the brain:
@@ -49,18 +46,8 @@ defmodule Automaton.Bot.Brain do
 
       def __brain__, do: @brain
 
-      def process(message, config \\ [])
-      def process(%Message{} = message, config) do
-        config =
-          @config
-          |> Keyword.merge(config)
-          |> Automaton.Bot.Brain.parse_runtime_config()
-
-        @brain.process(message, config)
-      end
-
-      def process(message, _config) do
-        raise ArgumentError, "expected %Automaton.Conversation.Message{}, got #{inspect message}"
+      def process(message) do
+        @brain.process(message, @config)
       end
     end
   end
@@ -75,7 +62,7 @@ defmodule Automaton.Bot.Brain do
 
     unless brain do
       raise ArgumentError, "missing :brain configuration in " <>
-                           "config #{inspect otp_app}, #{inspect bot}"
+                           "config #{inspect opts}, #{inspect bot}"
     end
 
     {otp_app, brain, config}

@@ -15,17 +15,20 @@ config :sample, Sample.Bot.Brain,
   brain: Automaton.Brains.Echo
 
 # In your application code
+
+# Define your bot
 defmodule Sample.Bot do
   use Automaton.Bot, otp_app: :sample,
                       brain: Sample.Bot.Brain
 end
 
+# Define the brain to be used by your bot
 defmodule Sample.Bot.Brain do
   use Automaton.Bot.Brain, otp_app: :sample
 end
 
 # In an IEx session
-Sample.Bot.message("Hello World")
+Sample.Bot.converse("Hello World")
 ```
 
 ## Installation
@@ -45,7 +48,7 @@ Platform          | Automaton adapter
 Facebook Messenger| Automaton.Adapters.FacebookMessenger
 Telegram          | Automaton.Adapters.Telegram
 Slack             | Automaton.Adapters.Slack
-Test              | Automaton.Adapters.Test
+Console (Testing) | Automaton.Adapters.Console
 
 Configure your adapter in `config/config.exs` file:
 
@@ -62,8 +65,8 @@ You can also define custom adapters by implementing callbacks defined in
 
 Platform                | Automaton adapter
 :-----------------------| :------------------------
-Echo                    | Automaton.Brains.Echo
 [Wit.ai](http://wit.ai) | Automaton.Brains.WitAi
+Echo (Testing)          | Automaton.Brains.Echo
 
 Configure your adapter in `config/config.exs` file:
 

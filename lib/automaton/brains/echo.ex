@@ -6,8 +6,8 @@ defmodule Automaton.Brains.Echo do
 
   alias Automaton.Conversation.Message
 
-  def process(%Message{text: text} = message, _config) do
-    {:ok, text}
+  def process(%Message{text: text, receipient: receipient, sender: sender}, _config) do
+    {:ok, %Message{text: text, receipient: sender, sender: receipient}}
   end
 
 end

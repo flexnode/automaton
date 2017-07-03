@@ -7,7 +7,7 @@ defmodule Automaton.Conversation.Supervisor do
 
   def init(:ok) do
     children = [
-      worker(Automaton.Conversation, [], restart: :temporary)
+      worker(Automaton.Conversation.Server, [], restart: :temporary)
     ]
 
     supervise(children, strategy: :simple_one_for_one)

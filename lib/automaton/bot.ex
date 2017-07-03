@@ -40,43 +40,36 @@ defmodule Automaton.Bot do
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
 
-      {otp_app, adapter, config} = Automaton.Bot.parse_config(__MODULE__, opts)
+      {otp_app, adapter, brain, config} = Automaton.Bot.parse_config(__MODULE__, opts)
 
       import Plug.Conn, only: [send_resp: 3]
       @behaviour Plug
 
       @adapter adapter
+      @brain brain
       @config config
 
       def __adapter__, do: @adapter
 
+      def __brain__, do: @brain
+
       def init(default), do: default
 
       def call(conn, params) do
-        params
-        |> parse
-        |> Automaton.process
-
+        converse(params)
         send_resp(conn, 200, "Success")
       end
 
-      def parse(response) do
-        message = @adapter.parse(response)
-        %{message | bot: __MODULE__}
+      def converse(message) do
+        Automaton.converse(message, __MODULE__, @brain)
       end
 
-      def send(message, config \\ [])
-      def send(%Automaton.Conversation.Message{} = message, config) do
-        config =
-          @config
-          |> Keyword.merge(config)
-          |> Automaton.Bot.parse_runtime_config()
-
-        @adapter.send(message, config)
+      def parse(message) do
+        @adapter.parse(message)
       end
 
-      def send(message, _config) do
-        raise ArgumentError, "expected %Automaton.Conversation.Message{}, got #{inspect message}"
+      def send(message) do
+        @adapter.send(message, @config)
       end
     end
   end
@@ -88,13 +81,19 @@ defmodule Automaton.Bot do
     otp_app = Keyword.fetch!(opts, :otp_app)
     config = Application.get_env(otp_app, bot, [])
     adapter = opts[:adapter] || config[:adapter]
+    brain = opts[:brain]
 
     unless adapter do
       raise ArgumentError, "missing :adapter configuration in " <>
                            "config #{inspect otp_app}, #{inspect bot}"
     end
 
-    {otp_app, adapter, config}
+    unless brain do
+      raise ArgumentError, "missing :brain configuration in " <>
+                           "config #{inspect opts}, #{inspect bot}"
+    end
+
+    {otp_app, adapter, brain, config}
   end
 
   @doc """

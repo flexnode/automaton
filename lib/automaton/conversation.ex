@@ -1,77 +1,65 @@
 defmodule Automaton.Conversation do
   @moduledoc """
-  Represents a conversation between a user and the bot.
+  Module to manage Automaton conversations.
   """
 
-  defstruct session_id: nil,
-            messages: [],
-            started_at: nil,
-            last_message_at: nil,
-            messenger: nil
-
-  use GenServer
   alias Automaton.Conversation.Message
 
-  @doc """
-  Starts a new conversation with the initial message
-  """
-  def start_link(message, opts \\ []) do
-    GenServer.start_link(__MODULE__, message, opts)
-  end
-
-  @doc """
-  Initialize the conversation state
-  """
-  def init(%Message{} = message) do
-    state = init_state(message)
-    {:ok, state}
-  end
-
-  @doc """
-  Get conversation info
-  """
-  def get_info(pid) do
-    GenServer.call(pid, {:info})
-  end
+  @registry Automaton.Registry
 
   @doc """
   Adds a message to the conversation
   """
-  def add_message(pid, %Message{} = message) do
-    GenServer.call(pid, {:add_message, message})
+  def add_message(%Message{session_id: session_id} = message) do
+    case lookup(session_id) do
+      nil ->
+        start_new_conversation(message)
+      pid ->
+        resume_existing_conversation(pid, message)
+    end
   end
 
   @doc """
-  Stop current conversation and clean up
+  Get a conversation and it's messages using it's session id
   """
-  def stop(pid, reason \\ :normal, timeout \\ :infinity) do
-    GenServer.stop(pid, reason, timeout)
+  def get(session_id) do
+    case lookup(session_id) do
+      nil ->
+        {:error, :conversation_not_found}
+      pid ->
+        {:ok, Automaton.Conversation.Server.get_info(pid)}
+    end
   end
 
-  ### Callbacks ###
-
-  def handle_call({:info}, _from, state) do
-    {:reply, state, state}
+  @doc """
+  Ends a conversation
+  """
+  def terminate(session_id) do
+    case lookup(session_id) do
+      nil ->
+        {:error, :conversation_not_found}
+      pid ->
+        {:ok, Automaton.Conversation.Server.stop(pid)}
+    end
   end
 
-  def handle_call({:add_message, %Message{sent_at: sent_at} = message}, _from, state) do
-    {:reply,
-      :ok,
-      %{state | messages: [message | state.messages], last_message_at: sent_at}
-    }
+  defp start_new_conversation(%Message{session_id: session_id} = message) do
+    Supervisor.start_child(Automaton.Conversation.Supervisor,
+                            [message, [name: via_tuple(session_id)]])
   end
 
-  def terminate(_reason, _state) do
-    # Persist to log for storage
+  defp lookup(session_id) do
+    case Registry.lookup(@registry, session_id) do
+      [] -> nil
+      [{pid, _}] -> pid
+    end
   end
 
-  defp init_state(%Message{session_id: session_id, sent_at: sent_at, messenger: messenger} = message) do
-    %__MODULE__{
-      session_id: session_id,
-      messages: [message],
-      started_at: sent_at,
-      last_message_at: sent_at,
-      messenger: messenger
-    }
+  defp resume_existing_conversation(pid, message) do
+    Automaton.Conversation.Server.add_message(pid, message)
+  end
+
+  defp via_tuple(key) do
+    {:via, Registry, {@registry, key}}
   end
 end

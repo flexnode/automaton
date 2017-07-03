@@ -7,6 +7,5 @@ defmodule Automaton.Conversation.Message do
             sender: nil,
             receipient: nil,
             text: "",
-            sent_at: nil,
-            bot: nil
+            sent_at: nil
 end
