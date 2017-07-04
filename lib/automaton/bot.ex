@@ -64,12 +64,12 @@ defmodule Automaton.Bot do
         Automaton.converse(message, __MODULE__, @brain)
       end
 
-      def parse(message) do
-        @adapter.parse(message)
+      def receive(message) do
+        Automaton.receive(message, @adapter)
       end
 
-      def send(message) do
-        @adapter.send(message, @config)
+      def reply(message) do
+        Automaton.reply(message, @adapter, @config)
       end
     end
   end
