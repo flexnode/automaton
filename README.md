@@ -63,7 +63,7 @@ You can also define custom adapters by implementing callbacks defined in
 
 ## Brains
 
-Platform                | Automaton adapter
+Platform                | Automaton brain
 :-----------------------| :------------------------
 [Wit.ai](http://wit.ai) | Automaton.Brains.WitAi
 Echo (Testing)          | Automaton.Brains.Echo
