@@ -5,6 +5,9 @@ defmodule Automaton do
   alias Automaton.Conversation
   alias Automaton.Conversation.Message
 
+  @doc """
+  Converse with a bot and brain by sending a message
+  """
   def converse(message, bot, brain) do
     with {:ok, received_message} <- bot.receive(message),
          {:ok, processed_message} <- brain.process(received_message),
@@ -15,20 +18,24 @@ defmodule Automaton do
     end
   end
 
+  @doc """
+  Bot's receive callback. Parses the message and starts a conversation
+  """
   def receive(message, bot, adapter) do
     with {:ok, parsed_message} <- parse_and_set_receipient(message, bot, adapter),
-         session_id <- generate_session_id(bot, parsed_message.sender),
-         {:ok, message} <- Conversation.add_message(bot, session_id, parsed_message) do
+         {:ok, message} <- Conversation.add_message(parsed_message, bot) do
       {:ok, message}
     else
       error -> error
     end
   end
 
+  @doc """
+  Bot's reply callback. Sends the message and add it to the conversation
+  """
   def reply(%Message{} = message, bot, adapter, config) do
     with {:ok, sent_message} <- adapter.send(message, config),
-         session_id <- generate_session_id(bot, sent_message.receipient),
-         {:ok, message} <- Conversation.add_message(bot, session_id, sent_message) do
+         {:ok, message} <- Conversation.add_message(sent_message, bot, sent_message.session_id) do
       {:ok, message}
     else
       error -> error
@@ -40,6 +47,4 @@ defmodule Automaton do
       {:ok, %{parsed_message | receipient: bot}}
     end
   end
-
-  defp generate_session_id(bot, user), do: {bot, user}
 end

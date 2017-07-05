@@ -3,32 +3,35 @@ defmodule Automaton.ConversationTest do
   alias Automaton.Conversation
   alias Automaton.Conversation.Message
 
-  setup do
-    session_id = "test"
+  @bot __MODULE__
+  @sender :test
 
+  setup do
     on_exit fn ->
-      Conversation.terminate(session_id)
+      Conversation.terminate({@bot, @sender})
     end
 
-    %{bot: __MODULE__, session_id: session_id}
+    %{bot: @bot}
   end
 
-  describe "add_message/1" do
-    test "starts a new conversation if no previous conversation found", %{bot: bot, session_id: session_id} do
+  describe "add_message/2" do
+    test "starts a new conversation if no previous conversation found", %{bot: bot} do
       message = create_message()
 
-      assert {:error, _} = Conversation.get(session_id)
-      assert {:ok, _} = Conversation.add_message(bot, session_id, message)
+      assert {:ok, message} = Conversation.add_message(message, bot)
 
-      {:ok, conversation} = Conversation.get(session_id)
+      {:ok, conversation} = Conversation.get(message.session_id)
       assert length(conversation.messages) == 1
     end
+  end
 
-    test "continues the previous conversation", %{bot: bot, session_id: session_id} do
+  describe "add_message/3" do
+    test "continues the previous conversation", %{bot: bot} do
       first_message = create_message()
       second_message = create_message(sent_at: :os.system_time(:seconds) + 1)
 
-      {:ok, _message} = Conversation.add_message(bot, session_id, first_message)
+      {:ok, message} = Conversation.add_message(first_message, bot)
+      session_id = message.session_id
       {:ok, conversation} = Conversation.get(session_id)
 
       assert length(conversation.messages) == 1
@@ -36,7 +39,7 @@ defmodule Automaton.ConversationTest do
       assert conversation.started_at == first_message.sent_at
       assert conversation.last_message_at == first_message.sent_at
 
-      Conversation.add_message(bot, session_id, second_message)
+      Conversation.add_message(second_message, bot, session_id)
       {:ok, conversation} = Conversation.get(session_id)
 
       assert length(conversation.messages) == 2
@@ -47,37 +50,39 @@ defmodule Automaton.ConversationTest do
   end
 
   describe "get/1" do
-    test "fails if no conversation exist with that session id", %{session_id: session_id} do
-      assert  {:error, _} = Conversation.get(session_id)
+    test "fails if no conversation exist with that session id" do
+      assert  {:error, _} = Conversation.get("test")
     end
 
-    test "retrieves an existing conversation", %{bot: bot, session_id: session_id} do
+    test "retrieves an existing conversation", %{bot: bot} do
       message = create_message()
-      Conversation.add_message(bot, session_id, message)
-      assert {:ok, conversation} = Conversation.get(session_id)
+      {:ok, message} = Conversation.add_message(message, bot)
+      assert {:ok, conversation} = Conversation.get(message.session_id)
       assert conversation.started_at == message.sent_at
+      assert conversation.messages == [message]
     end
   end
 
   describe "last_message/1" do
-    test "returns last message of the conversation", %{bot: bot, session_id: session_id} do
+    test "returns last message of the conversation", %{bot: bot} do
       message = create_message()
-      Conversation.add_message(bot, session_id, message)
+      {:ok, message} = Conversation.add_message(message, bot)
 
-      last_message = Conversation.last_message(session_id)
-      assert last_message.text == message.text
-      assert last_message.sent_at == message.sent_at
+      last_message = Conversation.last_message(message.session_id)
+      assert last_message == message
     end
   end
 
   describe "terminate/1" do
-    test "fails if no conversation exist with that session id", %{session_id: session_id} do
-      assert  {:error, _} = Conversation.terminate(session_id)
+    test "fails if no conversation exist with that session id" do
+      assert  {:error, _} = Conversation.terminate("test")
     end
 
-    test "terminates an existing conversation", %{bot: bot, session_id: session_id} do
+    test "terminates an existing conversation", %{bot: bot} do
       message = create_message()
-      Conversation.add_message(bot, session_id, message)
+      {:ok, message} = Conversation.add_message(message, bot)
+      session_id = message.session_id
+
       assert {:ok, _conversation} = Conversation.get(session_id)
 
       Conversation.terminate(session_id)
@@ -88,7 +93,8 @@ defmodule Automaton.ConversationTest do
 
   defp create_message(opts \\ []) do
     defaults = [text: "Hello World",
-                sent_at: :os.system_time(:seconds)]
+                sent_at: :os.system_time(:seconds),
+                sender: :test]
     opts = Keyword.merge(defaults, opts)
     struct(Message, opts)
   end

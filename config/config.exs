@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :bot, key: :value
+#     config :automaton, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:bot, :key)
+#     Application.get_env(:automaton, :key)
 #
 # Or configure a 3rd-party app:
 #
