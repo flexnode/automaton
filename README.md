@@ -29,6 +29,9 @@ end
 
 # In an IEx session
 Sample.Bot.converse("Hello World")
+iex> {:ok,
+ %Automaton.Conversation.Message{receipient: :console, sender: Sample.Bot,
+  sent_at: 1499264553, session_id: {Sample.Bot, :console}, text: "Hello World"}}
 ```
 
 ## Installation
