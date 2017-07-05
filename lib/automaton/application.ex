@@ -10,7 +10,7 @@ defmodule Automaton.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(Registry, [:unique, Automaton.Registry]),
+      supervisor(Registry, [:unique, Automaton.Conversation.Registry]),
       supervisor(Automaton.Conversation.Supervisor, []),
       # Start your own worker by calling: Api.Worker.start_link(arg1, arg2, arg3)
       # worker(Api.Worker, [arg1, arg2, arg3]),
