@@ -48,7 +48,7 @@ Platform          | Automaton adapter
 Facebook Messenger| Automaton.Adapters.FacebookMessenger
 Telegram          | Automaton.Adapters.Telegram
 Slack             | Automaton.Adapters.Slack
-Console (Testing) | Automaton.Adapters.Console
+Text (Testing)    | Automaton.Adapters.Text
 
 Configure your adapter in `config/config.exs` file:
 

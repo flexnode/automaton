@@ -18,10 +18,17 @@ defmodule Automaton.Conversation do
   @registry Automaton.Registry
 
   @doc """
-  Adds a message to the conversation.
-  Automatically starts a new conversation or resumes an existing one
+  Adds a message to a new conversation.
   """
-  def add_message(bot, session_id, %Message{} = message) do
+  def add_message(%Message{sender: sender} = message, bot) do
+    session_id = generate_session_id(bot, sender)
+    add_message(message, bot, session_id)
+  end
+
+  @doc """
+  Adds a message to an existing conversation
+  """
+  def add_message(%Message{} = message, bot, session_id) do
     case lookup(session_id) do
       nil ->
         start_new_conversation(bot, session_id, message)
@@ -93,6 +100,8 @@ defmodule Automaton.Conversation do
   defp resume_existing_conversation(pid, message) do
     Automaton.Conversation.Server.add_message(pid, message)
   end
+
+  defp generate_session_id(bot, user), do: {bot, user}
 
   defp via_tuple(session_id) do
     {:via, Registry, {@registry, session_id}}
