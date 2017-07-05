@@ -3,6 +3,7 @@ defmodule Automaton do
   Elixir library to easily build and run ChatBots.
   """
   alias Automaton.Conversation
+  alias Automaton.Conversation.Message
 
   def converse(message, bot, brain) do
     with {:ok, received_message} <- bot.receive(message),
@@ -14,21 +15,31 @@ defmodule Automaton do
     end
   end
 
-  def receive(message, adapter) do
-    with {:ok, parsed_message} <- adapter.parse(message),
-         {:ok, _} <- Conversation.add_message(%{parsed_message | session_id: "test"}) do
-      {:ok, parsed_message}
+  def receive(message, bot, adapter) do
+    with {:ok, parsed_message} <- parse_and_set_receipient(message, bot, adapter),
+         session_id <- generate_session_id(bot, parsed_message.sender),
+         {:ok, message} <- Conversation.add_message(bot, session_id, parsed_message) do
+      {:ok, message}
     else
       error -> error
     end
   end
 
-  def reply(message, adapter, config) do
+  def reply(%Message{} = message, bot, adapter, config) do
     with {:ok, sent_message} <- adapter.send(message, config),
-         {:ok, _} <- Conversation.add_message(%{sent_message | session_id: "test"}) do
-      {:ok, sent_message}
+         session_id <- generate_session_id(bot, sent_message.receipient),
+         {:ok, message} <- Conversation.add_message(bot, session_id, sent_message) do
+      {:ok, message}
     else
       error -> error
     end
   end
+
+  defp parse_and_set_receipient(message, bot, adapter) do
+    with {:ok, parsed_message} <- adapter.parse(message) do
+      {:ok, %{parsed_message | receipient: bot}}
+    end
+  end
+
+  defp generate_session_id(bot, user), do: {bot, user}
 end
