@@ -65,11 +65,11 @@ defmodule Automaton.Bot do
       end
 
       def receive(message) do
-        Automaton.receive(message, @adapter)
+        Automaton.receive(message, __MODULE__, @adapter)
       end
 
       def reply(message) do
-        Automaton.reply(message, @adapter, @config)
+        Automaton.reply(message, __MODULE__, @adapter, @config)
       end
     end
   end
