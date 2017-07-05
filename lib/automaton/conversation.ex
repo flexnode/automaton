@@ -15,7 +15,7 @@ defmodule Automaton.Conversation do
   alias Automaton.Conversation.Message
   alias Automaton.Conversation.Server
 
-  @registry Automaton.Registry
+  @registry Automaton.Conversation.Registry
 
   @doc """
   Adds a message to a new conversation.
