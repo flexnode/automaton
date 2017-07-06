@@ -34,7 +34,7 @@ defmodule Automaton.Bot.Brain do
   @doc """
   Processes the message and returns a text response
   """
-  @callback process(message, config) :: {:ok, String.t} | {:error, term}
+  @callback process(message, config) :: {:ok, message} | {:error, term}
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
