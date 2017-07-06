@@ -14,7 +14,8 @@ defmodule Automaton do
          {:ok, sent_message} <- bot.reply(processed_message) do
       {:ok, sent_message}
     else
-      error -> raise error
+      # Commented out to pass FB verification request for now
+      # error -> raise error
     end
   end
 
