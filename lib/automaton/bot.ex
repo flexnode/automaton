@@ -43,6 +43,7 @@ defmodule Automaton.Bot do
       {otp_app, adapter, brain, config} = Automaton.Bot.parse_config(__MODULE__, opts)
 
       import Plug.Conn, only: [send_resp: 3]
+      require Logger
       @behaviour Plug
 
       @adapter adapter
@@ -56,6 +57,7 @@ defmodule Automaton.Bot do
       def init(default), do: default
 
       def call(conn, params) do
+        Logger.info("PARAMS: #{inspect params}")
         converse(params)
         send_resp(conn, 200, "Success")
       end
