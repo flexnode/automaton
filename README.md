@@ -1,5 +1,7 @@
 # Automaton
 
+[![Build Status](https://semaphoreci.com/api/v1/tslim/automaton/branches/master/shields_badge.svg)](https://semaphoreci.com/tslim/automaton)
+
 > Note: This library is still under heavy development.
 
 Elixir library to easily build and run ChatBots.
