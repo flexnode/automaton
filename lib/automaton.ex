@@ -23,7 +23,7 @@ defmodule Automaton do
   Bot's receive callback. Parses the message and starts a conversation
   """
   def receive(message, bot, adapter) do
-    with {:ok, parsed_message} <- parse_and_set_receipient(message, bot, adapter),
+    with {:ok, parsed_message} <- parse_and_set_recipient(message, bot, adapter),
          {:ok, message} <- Conversation.add_message(parsed_message, bot) do
       {:ok, message}
     else
@@ -43,9 +43,9 @@ defmodule Automaton do
     end
   end
 
-  defp parse_and_set_receipient(message, bot, adapter) do
+  defp parse_and_set_recipient(message, bot, adapter) do
     with {:ok, parsed_message} <- adapter.parse(message) do
-      {:ok, %{parsed_message | receipient: bot}}
+      {:ok, %{parsed_message | recipient: bot}}
     end
   end
 end

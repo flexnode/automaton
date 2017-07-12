@@ -5,7 +5,7 @@ defmodule Automaton.Conversation.Message do
 
   defstruct session_id: nil,
             sender: nil,
-            receipient: nil,
+            recipient: nil,
             text: "",
             sent_at: nil
 end
