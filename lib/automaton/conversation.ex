@@ -73,6 +73,11 @@ defmodule Automaton.Conversation do
     end
   end
 
+  @doc """
+  Generates the session id for the conversation
+  """
+  def generate_session_id(bot, user), do: {bot, user}
+
   defp start_new_conversation(bot, session_id, message) do
     with {:ok, pid} <- start_server(bot, session_id, message),
          message <- Server.last_message(pid) do
@@ -100,8 +105,6 @@ defmodule Automaton.Conversation do
   defp resume_existing_conversation(pid, message) do
     Automaton.Conversation.Server.add_message(pid, message)
   end
-
-  defp generate_session_id(bot, user), do: {bot, user}
 
   defp via_tuple(session_id) do
     {:via, Registry, {@registry, session_id}}

@@ -11,6 +11,8 @@ defmodule Automaton.Bot do
 
     defmodule Sample.Bot do
       use Automaton.Bot, otp_app: :sample
+
+      ...
     end
 
   Could be configured with:
@@ -30,40 +32,35 @@ defmodule Automaton.Bot do
       adapter: Automaton.Adapters.FacebookMessenger,
       access_token: {:system, "FB_MESSENGER_TOKEN"}
 
-  Once configured, you can use the adapter in your router/endpoints:
-
-    forward "/webhook/messenger", Sample.Bot
-
   This will forward responses to the bot which will then parse it
   using the adapter configured and start a conversation.
   """
+
+  @type incoming_message :: Automaton.Conversation.Message.t
+  @type processed_message :: Automaton.Conversation.Message.t
+
+  @doc """
+  Processes an incoming message and returns a processed message to
+  reply to the sender
+  """
+  @callback process(incoming_message) :: {:ok, processed_message} | {:error, term}
+
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
 
-      {otp_app, adapter, brain, config} = Automaton.Bot.parse_config(__MODULE__, opts)
+      {otp_app, adapter, config} = Automaton.Bot.parse_config(__MODULE__, opts)
 
-      import Plug.Conn, only: [send_resp: 3]
       require Logger
-      @behaviour Plug
+
+      @behaviour Automaton.Bot
 
       @adapter adapter
-      @brain brain
       @config config
 
       def __adapter__, do: @adapter
 
-      def __brain__, do: @brain
-
-      def init(default), do: default
-
-      def call(conn, params) do
-        Logger.info("PARAMS: #{inspect params}")
-        converse(params)
-        send_resp(conn, 200, "Success")
-      end
-
       def converse(message) do
-        Automaton.converse(message, __MODULE__, @brain)
+        Automaton.converse(message, __MODULE__)
       end
 
       def receive(message) do
@@ -83,19 +80,13 @@ defmodule Automaton.Bot do
     otp_app = Keyword.fetch!(opts, :otp_app)
     config = Application.get_env(otp_app, bot, [])
     adapter = opts[:adapter] || config[:adapter]
-    brain = opts[:brain]
 
     unless adapter do
       raise ArgumentError, "missing :adapter configuration in " <>
                            "config #{inspect otp_app}, #{inspect bot}"
     end
 
-    unless brain do
-      raise ArgumentError, "missing :brain configuration in " <>
-                           "config #{inspect opts}, #{inspect bot}"
-    end
-
-    {otp_app, adapter, brain, config}
+    {otp_app, adapter, config}
   end
 
   @doc """

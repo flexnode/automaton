@@ -13,20 +13,17 @@ Elixir library to easily build and run ChatBots.
 config :sample, Sample.Bot,
   adapter: Automaton.Adapters.Test
 
-config :sample, Sample.Bot.Brain,
-  brain: Automaton.Brains.Echo
-
 # In your application code
 
 # Define your bot
 defmodule Sample.Bot do
-  use Automaton.Bot, otp_app: :sample,
-                      brain: Sample.Bot.Brain
-end
+  use Automaton.Bot, otp_app: :sample
 
-# Define the brain to be used by your bot
-defmodule Sample.Bot.Brain do
-  use Automaton.Bot.Brain, otp_app: :sample
+  # Echo backs whatever you said
+  def process(incoming_message) do
+    build_outgoing_message(recipient: incoming_message.sender,
+                            text: incoming_message.text)
+  end
 end
 
 # In an IEx session
@@ -65,33 +62,6 @@ config :sample, Sample.Bot,
 
 You can also define custom adapters by implementing callbacks defined in
 [adapter.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/adapter.ex)
-
-## Brains
-
-Platform                | Automaton brain
-:-----------------------| :------------------------
-[Wit.ai](http://wit.ai) | Automaton.Brains.WitAi
-Echo (Testing)          | Automaton.Brains.Echo
-
-Configure your adapter in `config/config.exs` file:
-
-```elixir
-config :sample, Sample.Bot.Brain,
-  brain: Automaton.Brains.WitAi
-  # brain config (api keys, etc.)
-```
-
-You can also define custom brains by implementing callbacks defined in
-[brain.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/bot/brain.ex)
-
-## Phoenix Integration
-
-If you are using Phoenix, you can forward your webhook response to the bot.
-
-```elixir
-# In your router.ex
-forward "/bot/webhook", Sample.Bot
-```
 
 ## Documentation
 

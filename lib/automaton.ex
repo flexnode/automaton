@@ -6,16 +6,15 @@ defmodule Automaton do
   alias Automaton.Conversation.Message
 
   @doc """
-  Converse with a bot and brain by sending a message
+  Converse with a bot by sending it a message
   """
-  def converse(message, bot, brain) do
+  def converse(message, bot) do
     with {:ok, received_message} <- bot.receive(message),
-         {:ok, processed_message} <- brain.process(received_message),
+         {:ok, processed_message} <- bot.process(received_message),
          {:ok, sent_message} <- bot.reply(processed_message) do
       {:ok, sent_message}
     else
-      # Commented out to pass FB verification request for now
-      # error -> raise error
+      error -> error
     end
   end
 
@@ -32,7 +31,7 @@ defmodule Automaton do
   end
 
   @doc """
-  Bot's reply callback. Sends the message and add it to the conversation
+  Bot's reply callback. Sends the message and adds it to the conversation
   """
   def reply(%Message{} = message, bot, adapter, config) do
     with {:ok, sent_message} <- adapter.send(message, config),

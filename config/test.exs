@@ -1,7 +1,6 @@
 use Mix.Config
 
+config :logger, level: :warn
+
 config :automaton, Test.Bot,
           adapter: Automaton.Adapters.Text
-
-config :automaton, Test.Brain,
-          brain: Automaton.Brains.Echo
