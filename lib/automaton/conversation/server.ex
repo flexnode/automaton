@@ -6,15 +6,15 @@ defmodule Automaton.Conversation.Server do
   @doc """
   Starts a new conversation with the initial message
   """
-  def start_link(bot, session_id, message, opts \\ []) do
-    GenServer.start_link(__MODULE__, {bot, session_id, message}, opts)
+  def start_link(session_id, message, opts \\ []) do
+    GenServer.start_link(__MODULE__, {session_id, message}, opts)
   end
 
   @doc """
   Initialize the conversation state
   """
-  def init({bot, session_id, %Message{} = message}) do
-    state = init_state(bot, session_id, message)
+  def init({session_id, %Message{} = message}) do
+    state = init_state(session_id, message)
     {:ok, state}
   end
 
@@ -70,8 +70,8 @@ defmodule Automaton.Conversation.Server do
     # Persist to log for storage
   end
 
-  defp init_state(bot, session_id, %Message{} = message) do
-    %Conversation{session_id: session_id, bot: bot}
+  defp init_state(session_id, %Message{} = message) do
+    %Conversation{session_id: session_id}
     |> add_message_to_conversation(message)
   end
 

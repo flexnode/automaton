@@ -4,17 +4,12 @@ defmodule Automaton.Adapters.Text do
   """
   @behaviour Automaton.Adapter
 
-  alias Automaton.Conversation.Message
-
   def parse(text) do
-    message = %Message{text: text,
-                    sender: :console,
-                    sent_at: :os.system_time(:seconds)}
-
-    {:ok, message}
+    {:ok, :console, text, %{}}
   end
 
-  def send(message, _config) do
-    {:ok, message}
+  def send(_sender_id, message, _context, _config) do
+    IO.puts message
+    :ok
   end
 end

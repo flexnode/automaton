@@ -4,13 +4,12 @@ defmodule Automaton.Conversation do
   """
 
   @doc """
-  Represents a conversation between a user and the bot.
+  Represents a conversation between a user and a bot.
   """
   defstruct session_id: nil,
             messages: [],
             started_at: nil,
-            last_message_at: nil,
-            bot: nil
+            last_message_at: nil
 
   alias Automaton.Conversation.Message
   alias Automaton.Conversation.Server
@@ -18,20 +17,12 @@ defmodule Automaton.Conversation do
   @registry Automaton.Conversation.Registry
 
   @doc """
-  Adds a message to a new conversation.
-  """
-  def add_message(%Message{sender: sender} = message, bot) do
-    session_id = generate_session_id(bot, sender)
-    add_message(message, bot, session_id)
-  end
-
-  @doc """
   Adds a message to an existing conversation
   """
-  def add_message(%Message{} = message, bot, session_id) do
+  def add_message(session_id, %Message{} = message) do
     case lookup(session_id) do
       nil ->
-        start_new_conversation(bot, session_id, message)
+        start_new_conversation(session_id, message)
       pid ->
         resume_existing_conversation(pid, message)
     end
@@ -73,22 +64,16 @@ defmodule Automaton.Conversation do
     end
   end
 
-  @doc """
-  Generates the session id for the conversation
-  """
-  def generate_session_id(bot, user), do: {bot, user}
-
-  defp start_new_conversation(bot, session_id, message) do
-    with {:ok, pid} <- start_server(bot, session_id, message),
+  defp start_new_conversation(session_id, message) do
+    with {:ok, pid} <- start_server(session_id, message),
          message <- Server.last_message(pid) do
       {:ok, message}
     end
   end
 
-  defp start_server(bot, session_id, message) do
+  defp start_server(session_id, message) do
     Supervisor.start_child(Automaton.Conversation.Supervisor,
-                            [bot,
-                              session_id,
+                            [session_id,
                               message,
                               [name: via_tuple(session_id)]
                             ]

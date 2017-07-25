@@ -36,14 +36,14 @@ defmodule Automaton.Bot do
   using the adapter configured and start a conversation.
   """
 
-  @type incoming_message :: Automaton.Conversation.Message.t
-  @type processed_message :: Automaton.Conversation.Message.t
+  @type sender_id :: String.t
+  @type message_text :: String.t
+  @type context :: Map.t
 
   @doc """
-  Processes an incoming message and returns a processed message to
-  reply to the sender
+  Callback to handle an incoming message
   """
-  @callback process(incoming_message) :: {:ok, processed_message} | {:error, term}
+  @callback process(sender_id, message_text, context) :: :ok | {:error, term}
 
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
@@ -59,16 +59,14 @@ defmodule Automaton.Bot do
 
       def __adapter__, do: @adapter
 
+      def __config__, do: @config
+
       def converse(message) do
-        Automaton.converse(message, __MODULE__)
+        Automaton.converse(__MODULE__, message)
       end
 
-      def receive(message) do
-        Automaton.receive(message, __MODULE__, @adapter)
-      end
-
-      def reply(message) do
-        Automaton.reply(message, __MODULE__, @adapter, @config)
+      def reply(sender_id, message_text, context) do
+        Automaton.reply(__MODULE__, sender_id, message_text, context)
       end
     end
   end

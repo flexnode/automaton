@@ -8,43 +8,31 @@ defmodule Automaton do
   @doc """
   Converse with a bot by sending it a message
   """
-  def converse(message, bot) do
-    with {:ok, received_message} <- bot.receive(message),
-         {:ok, processed_message} <- bot.process(received_message),
-         {:ok, sent_message} <- bot.reply(processed_message) do
-      {:ok, sent_message}
+  def converse(bot, message) do
+    with {:ok, sender_id, message_text, context} <- bot.__adapter__.parse(message),
+         parsed_message <- Message.build(sender_id, bot, message_text, context),
+         session_id <- generate_session_id(bot, sender_id),
+         {:ok, received_message} <- Conversation.add_message(session_id, parsed_message),
+         :ok <- bot.process(received_message.sender, received_message.text, received_message.context) do
+      :ok
     else
       error -> error
     end
   end
 
   @doc """
-  Bot's receive callback. Parses the message and starts a conversation
+  Reply to the user and adds it to the conversation
   """
-  def receive(message, bot, adapter) do
-    with {:ok, parsed_message} <- parse_and_set_recipient(message, bot, adapter),
-         {:ok, message} <- Conversation.add_message(parsed_message, bot) do
-      {:ok, message}
+  def reply(bot, sender_id, message_text, context) do
+    with :ok <- bot.__adapter__.send(sender_id, message_text, context, bot.__config__),
+         sent_message <- Message.build(bot, sender_id, message_text, context),
+         session_id <- generate_session_id(bot, sender_id),
+         {:ok, message} <- Conversation.add_message(session_id, sent_message) do
+      :ok
     else
       error -> error
     end
   end
 
-  @doc """
-  Bot's reply callback. Sends the message and adds it to the conversation
-  """
-  def reply(%Message{} = message, bot, adapter, config) do
-    with {:ok, sent_message} <- adapter.send(message, config),
-         {:ok, message} <- Conversation.add_message(sent_message, bot, sent_message.session_id) do
-      {:ok, message}
-    else
-      error -> error
-    end
-  end
-
-  defp parse_and_set_recipient(message, bot, adapter) do
-    with {:ok, parsed_message} <- adapter.parse(message) do
-      {:ok, %{parsed_message | recipient: bot}}
-    end
-  end
+  defp generate_session_id(bot, sender), do: {bot, sender}
 end

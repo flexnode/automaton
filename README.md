@@ -4,7 +4,11 @@
 
 > Note: This library is still under heavy development.
 
-Elixir library to easily build and run ChatBots.
+Automaton is an Elixir library that manages the conversation between your chat bot and the user by maintaining the messages and context in a GenServer.
+
+This is useful as most messaging platforms (webhooks) and NLP services (REST API) communicates with your backend in the typical Request/Response mode.
+
+Automaton aims to be the glue/framework/library to help you focus on your backend instead of messing around with the plumbing of maintaining chat bots.
 
 ## Quick Start
 
@@ -20,17 +24,15 @@ defmodule Sample.Bot do
   use Automaton.Bot, otp_app: :sample
 
   # Echo backs whatever you said
-  def process(incoming_message) do
-    build_outgoing_message(recipient: incoming_message.sender,
-                            text: incoming_message.text)
+  def process(sender_id, message, context) do
+    reply(sender_id, message, context)
   end
 end
 
 # In an IEx session
-Sample.Bot.converse("Hello World")
-iex> {:ok,
- %Automaton.Conversation.Message{recipient: :console, sender: Sample.Bot,
-  sent_at: 1499264553, session_id: {Sample.Bot, :console}, text: "Hello World"}}
+iex> Sample.Bot.converse(:console, "Hello World")
+Hello World
+:ok
 ```
 
 ## Installation

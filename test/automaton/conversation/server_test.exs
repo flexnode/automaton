@@ -6,7 +6,7 @@ defmodule Automaton.Conversation.ServerTest do
   setup do
     session_id = "test"
     message = create_message()
-    {:ok, server} = Automaton.Conversation.Server.start_link(__MODULE__, session_id, message)
+    {:ok, server} = Automaton.Conversation.Server.start_link(session_id, message)
     {:ok, server: server, message: message, session_id: session_id}
   end
 
@@ -36,7 +36,6 @@ defmodule Automaton.Conversation.ServerTest do
     conversation = Server.get_info(server)
 
     assert length(conversation.messages) == 2
-    assert conversation.bot == __MODULE__
     assert conversation.session_id == session_id
     assert conversation.started_at == first_message.sent_at
     assert conversation.last_message_at == second_message.sent_at

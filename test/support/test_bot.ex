@@ -1,8 +1,7 @@
 defmodule Test.Bot do
   use Automaton.Bot, otp_app: :automaton
-  alias Automaton.Conversation.Message
 
-  def process(%Message{text: text, recipient: recipient, sender: sender} = message) do
-    {:ok, %{message | text: text, recipient: sender, sender: recipient}}
+  def process(sender_id, message_text, context) do
+    reply(sender_id, message_text, context)
   end
 end
