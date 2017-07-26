@@ -15,6 +15,8 @@ defmodule Automaton.ConversationTest do
 
   describe "add_message/2" do
     test "add message to conversation", %{session_id: session_id} do
+      assert  {:error, _} = Conversation.get(session_id)
+
       first_message = create_message()
       second_message = create_message(sent_at: :os.system_time(:seconds) + 1)
 

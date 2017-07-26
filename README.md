@@ -30,7 +30,7 @@ defmodule Sample.Bot do
 end
 
 # In an IEx session
-iex> Sample.Bot.converse(:console, "Hello World")
+iex> Sample.Bot.converse("console", "Hello World")
 Hello World
 :ok
 ```
@@ -52,7 +52,7 @@ Platform          | Automaton adapter
 Facebook Messenger| Automaton.Adapters.FacebookMessenger
 Telegram          | Automaton.Adapters.Telegram
 Slack             | Automaton.Adapters.Slack
-Text (Testing)    | Automaton.Adapters.Text
+Console (Included)| Automaton.Adapters.Console
 
 Configure your adapter in `config/config.exs` file:
 

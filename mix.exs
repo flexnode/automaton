@@ -9,7 +9,10 @@ defmodule Automaton.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
-     elixirc_paths: elixirc_paths(Mix.env)]
+     elixirc_paths: elixirc_paths(Mix.env),
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
+    ]
   end
 
   # Specifies which paths to compile per environment.
@@ -22,6 +25,7 @@ defmodule Automaton.Mixfile do
   end
 
   defp deps do
-    [{:plug, "~> 1.3.0"}]
+    [{:plug, "~> 1.3.0"},
+     {:excoveralls, "~> 0.7", only: :test}]
   end
 end

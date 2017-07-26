@@ -27,7 +27,7 @@ defmodule Automaton do
     with :ok <- bot.__adapter__.send(sender_id, message_text, context, bot.__config__),
          sent_message <- Message.build(bot, sender_id, message_text, context),
          session_id <- generate_session_id(bot, sender_id),
-         {:ok, message} <- Conversation.add_message(session_id, sent_message) do
+         {:ok, _message} <- Conversation.add_message(session_id, sent_message) do
       :ok
     else
       error -> error

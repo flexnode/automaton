@@ -86,16 +86,4 @@ defmodule Automaton.Bot do
 
     {otp_app, adapter, config}
   end
-
-  @doc """
-  Parses the OTP configuration at run time.
-  This function will transform all the {:system, "ENV_VAR"} tuples into their
-  respective values grabbed from the process environment.
-  """
-  def parse_runtime_config(config) do
-    Enum.map config, fn
-      {key, {:system, env_var}} -> {key, System.get_env(env_var)}
-      {key, value} -> {key, value}
-    end
-  end
 end

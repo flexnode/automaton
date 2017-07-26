@@ -1,11 +1,11 @@
-defmodule Automaton.Adapters.Text do
+defmodule Automaton.Adapters.Console do
   @moduledoc """
-  Text Adapter for testing in console
+  Adapter for testing in console
   """
   @behaviour Automaton.Adapter
 
   def parse(text) do
-    {:ok, :console, text, %{}}
+    {:ok, "console", text, %{}}
   end
 
   def send(_sender_id, message, _context, _config) do
