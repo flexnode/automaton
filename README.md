@@ -15,7 +15,7 @@ Automaton aims to be the glue/framework/library to help you focus on your backen
 ```elixir
 # In your config/config.exs file
 config :sample, Sample.Bot,
-  adapter: Automaton.Adapters.Test
+  adapter: Automaton.Adapters.Console
 
 # In your application code
 
