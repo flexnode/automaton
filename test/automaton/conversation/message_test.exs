@@ -8,7 +8,7 @@ defmodule Automaton.Conversation.MessageTest do
       recipient = Automaton.Test.Bot
       message_text = "aloha"
       context = %{intent: "test"}
-      sent_at = :os.system_time(:microsecond)
+      sent_at = System.os_time(:microsecond)
 
       message_struct = Message.build(sender_id, recipient, message_text, context, sent_at)
 

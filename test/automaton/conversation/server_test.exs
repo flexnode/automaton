@@ -59,7 +59,7 @@ defmodule Automaton.Conversation.ServerTest do
 
   defp create_message(opts \\ []) do
     defaults = [text: "Hello World",
-                sent_at: :os.system_time(:seconds)]
+                sent_at: System.os_time(:microsecond)]
     opts = Keyword.merge(defaults, opts)
     struct(Message, opts)
   end
