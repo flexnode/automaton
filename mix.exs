@@ -34,10 +34,6 @@ defmodule Automaton.Mixfile do
   defp description do
     """
     Automaton is an Elixir library that manages the conversation between your chat bot and the user by maintaining the messages and context in a GenServer.
-
-This is useful as most messaging platforms (webhooks) and NLP services (REST API) communicates with your backend in the typical Request/Response mode.
-
-Automaton aims to be the glue/framework/library to help you focus on your backend instead of messing around with the plumbing of maintaining chat bots.
     """
   end
 
