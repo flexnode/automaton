@@ -30,7 +30,7 @@ defmodule Sample.Bot do
 end
 
 # In an IEx session
-iex> Sample.Bot.converse("console", "Hello World")
+iex> Sample.Bot.converse("Hello World")
 Hello World
 :ok
 ```

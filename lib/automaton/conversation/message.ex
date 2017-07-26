@@ -11,7 +11,7 @@ defmodule Automaton.Conversation.Message do
             context: %{},
             sent_at: nil
 
-  def build(sender_id, recipient, message_text, context \\ %{}, sent_at \\ :os.system_time(:microsecond)) do
+  def build(sender_id, recipient, message_text, context \\ %{}, sent_at \\ :os.system_time(:second)) do
     %Message{sender: sender_id,
               recipient: recipient,
               text: message_text,

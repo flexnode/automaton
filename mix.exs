@@ -28,7 +28,8 @@ defmodule Automaton.Mixfile do
   end
 
   defp deps do
-    [{:excoveralls, "~> 0.7", only: :test}]
+    [{:excoveralls, "~> 0.7", only: :test},
+     {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 
   defp description do
@@ -40,7 +41,7 @@ defmodule Automaton.Mixfile do
   defp package do
     [
       name: :automaton,
-      files: ["lib", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["T.S. Lim"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/flexnode/automaton"}
