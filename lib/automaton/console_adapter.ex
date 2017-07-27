@@ -1,4 +1,4 @@
-defmodule Automaton.Adapters.Console do
+defmodule Automaton.Console.Adapter do
   @moduledoc """
   Adapter for testing in console
   """

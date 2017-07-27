@@ -15,7 +15,7 @@ Automaton aims to be the glue/framework/library to help you focus on your backen
 ```elixir
 # In your config/config.exs file
 config :sample, Sample.Bot,
-  adapter: Automaton.Adapters.Console
+  adapter: Automaton.Console.Adapter
 
 # In your application code
 
@@ -49,10 +49,10 @@ Add Automaton in your `mix.exs` dependencies:
 
 Platform          | Automaton adapter
 :-----------------| :------------------------
-Facebook Messenger| Automaton.Adapters.FacebookMessenger
-Telegram          | Automaton.Adapters.Telegram
-Slack             | Automaton.Adapters.Slack
-Console (Included)| Automaton.Adapters.Console
+Facebook Messenger| [Automaton.FacebookMessenger.Adapter](https://github.com/flexnode/automaton_fb_messenger)
+Telegram          | Automaton.Telegram.Adapter
+Slack             | Automaton.Slack.Adapter
+Console (Included)| Automaton.Console.Adapter
 
 Configure your adapter in `config/config.exs` file:
 
