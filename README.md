@@ -1,6 +1,7 @@
 # Automaton
 
 [![Build Status](https://semaphoreci.com/api/v1/tslim/automaton/branches/master/shields_badge.svg)](https://semaphoreci.com/tslim/automaton)
+[![Coverage Status](https://coveralls.io/repos/github/flexnode/automaton/badge.svg?branch=master)](https://coveralls.io/github/flexnode/automaton?branch=master)
 
 > Note: This library is still under heavy development.
 
