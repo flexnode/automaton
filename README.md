@@ -56,12 +56,20 @@ Configure your adapter in `config/config.exs` file:
 
 ```elixir
 config :sample, Sample.Bot,
-  adapter: Automaton.Adapters.FacebookMessenger
+  adapter: Automaton.FacebookMessenger.Adapter
   # adapter config (api keys, etc.)
 ```
 
 You can also define custom adapters by implementing callbacks defined in
 [adapter.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/adapter.ex)
+
+## Proposed Roadmap
+[x] Stores conversation message and context
+[x] Adapter layer to support different messaging platforms
+[x] Simple callback to process messages/context
+[ ] Terminates stale conversation and logs it
+[ ] Callback for conversation termination for custom behavior
+[ ] Tracks simple metrics like conversation/messages counts
 
 ## Documentation
 
