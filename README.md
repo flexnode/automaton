@@ -64,12 +64,12 @@ You can also define custom adapters by implementing callbacks defined in
 [adapter.ex](https://github.com/flexnode/automaton/blob/master/lib/automaton/adapter.ex)
 
 ## Proposed Roadmap
-[x] Stores conversation message and context
-[x] Adapter layer to support different messaging platforms
-[x] Simple callback to process messages/context
-[ ] Terminates stale conversation and logs it
-[ ] Callback for conversation termination for custom behavior
-[ ] Tracks simple metrics like conversation/messages counts
+- [x] Stores conversation message and context
+- [x] Adapter layer to support different messaging platforms
+- [x] Simple callback to process messages/context
+- [ ] Terminates stale conversation and logs it
+- [ ] Callback for conversation termination for custom behavior
+- [ ] Tracks simple metrics like conversation/messages counts
 
 ## Documentation
 
