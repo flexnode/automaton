@@ -7,7 +7,7 @@ defmodule Automaton.Mixfile do
      package: package(),
      name: "Automaton",
      source_url: "https://github.com/flexnode/automaton",
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.4",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
