@@ -1,5 +1,5 @@
 defmodule Automaton.Conversation.MessageTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Automaton.Conversation.Message
 
   describe "build/5" do

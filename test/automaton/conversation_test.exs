@@ -1,5 +1,5 @@
 defmodule Automaton.ConversationTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Automaton.Conversation
   alias Automaton.Conversation.Message
 

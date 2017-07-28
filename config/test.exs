@@ -1,7 +1,5 @@
 use Mix.Config
 
-config :logger, level: :warn
-
 config :automaton, Automaton.Test.Bot,
           adapter: Automaton.Adapters.Test
 

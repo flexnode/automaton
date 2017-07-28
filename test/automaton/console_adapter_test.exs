@@ -1,5 +1,5 @@
 defmodule Automaton.Console.AdapterTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import ExUnit.CaptureIO
 
   describe "parse/1" do

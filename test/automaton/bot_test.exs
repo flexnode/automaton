@@ -1,5 +1,5 @@
 defmodule Automaton.BotTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   describe "parse_config/2" do
     test "parses configuration from config file" do
